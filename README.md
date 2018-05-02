@@ -35,3 +35,26 @@ module.exports = {
 ## 多入口文件
 
 有两种打包方式，一种是没有关系的，写数组，实现多个文件打包。另一种是每个文件都单独打包成一个文件。
+
+本地通过 cnpm i html-webpack-plugin --save-dev 失败，尝试了使用阿里云的docker能够成功安装，同时阿里云的docker使用的是nvm来管理node版本。方便切换。
+```
+1. 下载并安装NVM脚本（这里不能使用github上最新的nvm会报错。）
+curl https://raw.githubusercontent.com/creationix/nvm/v0.13.1/install.sh | bash
+source ~/.bash_profile
+
+2. 列出所需要的版本
+nvm list-remote
+
+3. 安装相应的版本
+nvm install v0.10.30
+
+4. 查看已安装的版本
+nvm list
+
+5.切换版本
+nvm use v0.10.30
+
+
+6.设置默认版本
+nvm alias default v0.10.30
+```
