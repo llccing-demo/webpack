@@ -29,3 +29,9 @@ module.exports = {
 };
 
 ```
+
+如果需要使用webpack.conf.prod.js配置文件，需要再package.json中指定 webpack --config webpack.conf.prod.js指定配置文件的路径。并且mode配置也可以写在webpack.conf.prod.js这个配置文件中。
+
+## 多入口文件
+
+有两种打包方式，一种是没有关系的，写数组，实现多个文件打包。另一种是每个文件都单独打包成一个文件。
