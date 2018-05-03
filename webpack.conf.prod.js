@@ -1,6 +1,12 @@
 const path = require('path');
 // 插件都是一个类，所以我们命名的时候尽量使用大写开头
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// 拆分css样式的插件
+const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+
+// 测试多个css文件，拆分构建
+const iviewCss = new ExtractTextWebpackPlugin('css/iview.css');
+const bootstrapCss = new ExtractTextWebpackPlugin('css/bootstrap.css')
 
 module.exports = {
     // 入口文件
@@ -16,9 +22,11 @@ module.exports = {
         rules: [
             {
                 // 解析css
-                test: /\.css/,
+                test: /\.css$/,
                 // 从右向左解析
-                use: ['style-loader', 'css-loader'],
+                use: iviewCss.extract({
+                    use: 'css-loader'
+                })
                 // 也可以写成下面的方式，方便些配置参数
                 // use: [
                 //     {
@@ -28,6 +36,12 @@ module.exports = {
                 //         loader: 'css-loader'
                 //     }
                 // ]
+
+            },{
+                test: /\.scss$/,
+                use: bootstrapCss.extract({
+                    use: ['css-loader', 'sass-loader']
+                })
             },{
                 test: /\.(eot|ttf|woff|svg)$/,
                 use: 'file-loader'
@@ -42,7 +56,10 @@ module.exports = {
             template: './src/index.html'
             // 会在打包好的bundle.js后面加上hash串
             // hash: true
-        })
+        }),
+        // 拆分后会把css文件放到dist目录下的css/style.css
+        iviewCss,
+        bootstrapCss
     ],
     mode: 'development'
 };
