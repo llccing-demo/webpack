@@ -1,3 +1,4 @@
-#app{
-    background: url('./images/head.jpg')
+#app {
+    background: url('./images/head.jpg');
+    flex: 1;
 }

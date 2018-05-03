@@ -3,7 +3,7 @@
 
 import Vue from 'vue';
 import iview from 'iview';
-// import 'iview/dist/styles/iview.css'
+import 'iview/dist/styles/iview.css'
 import 'bootstrap/scss/bootstrap.scss'
 import './style.css'
 
