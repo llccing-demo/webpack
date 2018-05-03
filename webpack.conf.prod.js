@@ -6,7 +6,7 @@ const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
 // 测试多个css文件，拆分构建
 const iviewCss = new ExtractTextWebpackPlugin('css/iview.css');
-const bootstrapCss = new ExtractTextWebpackPlugin('css/bootstrap.css')
+const bootstrapCss = new ExtractTextWebpackPlugin('css/bootstrap.css');
 
 module.exports = {
     // 入口文件
@@ -36,15 +36,39 @@ module.exports = {
                 //         loader: 'css-loader'
                 //     }
                 // ]
-
-            },{
+            },
+            {
                 test: /\.scss$/,
                 use: bootstrapCss.extract({
                     use: ['css-loader', 'sass-loader']
                 })
-            },{
+            },
+            {
+                test: /\.less$/,
+                use: bootstrapCss.extract({
+                    use: ['css-loader', 'less-loader']
+                })
+            },
+            {
                 test: /\.(eot|ttf|woff|svg)$/,
                 use: 'file-loader'
+            },
+            {
+                test: /\.(jpe?g|png|gif)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            // 小于8K的图片自动转成base64，并且不会存在实体图片
+                            limit: 8192,
+                            // 图片打包后存放的目录
+                            outputPath: 'images/'
+                        }
+                    }
+                ]
+            },{
+                test: /\.(htm|html)$/,
+                use: 'html-withimg-loader'
             }
         ]
     },
