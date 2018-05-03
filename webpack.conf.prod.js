@@ -12,12 +12,34 @@ module.exports = {
         // 打包后的目录，必须是绝对路径
         path: path.resolve('dist')
     },
+    module: {
+        rules: [
+            {
+                // 解析css
+                test: /\.css/,
+                // 从右向左解析
+                use: ['style-loader', 'css-loader'],
+                // 也可以写成下面的方式，方便些配置参数
+                // use: [
+                //     {
+                //         loader: 'style-loader'
+                //     },
+                //     {
+                //         loader: 'css-loader'
+                //     }
+                // ]
+            },{
+                test: /\.(eot|ttf|woff|svg)$/,
+                use: 'file-loader'
+            }
+        ]
+    },
     plugins: [
         // 通过new实例化，来使用插件
         new HtmlWebpackPlugin({
             // 用哪个html作为模板
             // 在src目录下创建一个index.html页面当作模板来用
-            template: './src/index.html',
+            template: './src/index.html'
             // 会在打包好的bundle.js后面加上hash串
             // hash: true
         })
