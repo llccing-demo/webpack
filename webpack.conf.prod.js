@@ -21,6 +21,19 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                },
+                // 只转化src目录下的js
+                include: /src/,
+                // 排除node_modules，优化构建速度
+                exclude: /node_modules/
+            },
+            {
                 // 解析css
                 test: /\.css$/,
                 // 从右向左解析
