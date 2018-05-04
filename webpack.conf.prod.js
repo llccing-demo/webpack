@@ -4,6 +4,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 拆分css样式的插件
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+const webpack = require('webpack');
+
 // 测试多个css文件，拆分构建
 // const iviewCss = new ExtractTextWebpackPlugin('css/iview.css');
 // const bootstrapCss = new ExtractTextWebpackPlugin('css/bootstrap.css');
@@ -87,8 +91,29 @@ module.exports = {
             // hash: true
         }),
         // 拆分后会把css文件放到dist目录下的css/style.css
-        new ExtractTextWebpackPlugin('css/iview.css')
+        new ExtractTextWebpackPlugin('css/iview.css'),
         // new ExtractTextWebpackPlugin('css/bootstrap.css')
+        // 构建前先清空dist目录
+        new CleanWebpackPlugin('dist'),
+        // 热替换
+        new webpack.HotModuleReplacementPlugin()
     ],
+    devServer: {
+        contentBase: './dist',
+        host: 'localhost',
+        port: 3000,
+        // 自动打开浏览器
+        open: true,
+        // 开启热更新
+        hot: true
+    },
+    resolve: {
+        // 别名
+        alias: {
+            $: 'window.$'
+        },
+        // 省略后缀
+        extensions: ['.js', '.json', '.css']
+    },
     mode: 'development'
 };
