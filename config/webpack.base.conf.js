@@ -1,25 +1,21 @@
 const path = require('path');
-// 插件都是一个类，所以我们命名的时候尽量使用大写开头
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// 拆分css样式的插件
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-
-const webpack = require('webpack');
-
-// 测试多个css文件，拆分构建
-// const iviewCss = new ExtractTextWebpackPlugin('css/iview.css');
-// const bootstrapCss = new ExtractTextWebpackPlugin('css/bootstrap.css');
-
 module.exports = {
-    // 入口文件
-    entry: './src/index.js',
-    // 出口文件
+    // 1.写成数组的方式可以打出多个入口文件，不过这里打包后的文件都合成了一个
+    // entry: ['./src/index.js', './src/login.js'],
+    // 2.真正实现多入口和多出口需要写成对象的方式
+    entry: {
+        index: './src/index.js',
+        login: './src/login.js'
+    },
     output: {
-        // 打包后的文件名称。添加hash可以防止文件缓存，每次都会生成4位hash串。
-        filename: 'bundle.[hash:4].js',
-        // 打包后的目录，必须是绝对路径
+        // 1. filename: 'bundle.js',
+        // 2. [name]就可以将出口文件名和入口文件名一一对应
+        // 打包后会生成index.js和login.js文件
+        filename: '[name].[hash:4].js',
         path: path.resolve('dist')
     },
     module: {
@@ -81,32 +77,45 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        // 通过new实例化，来使用插件
-        new HtmlWebpackPlugin({
-            // 用哪个html作为模板
-            // 在src目录下创建一个index.html页面当作模板来用
-            template: './src/index.html'
-            // 会在打包好的bundle.js后面加上hash串
-            // hash: true
-        }),
-        // 拆分后会把css文件放到dist目录下的css/style.css
-        new ExtractTextWebpackPlugin('css/iview.css'),
-        // new ExtractTextWebpackPlugin('css/bootstrap.css')
-        // 构建前先清空dist目录
-        new CleanWebpackPlugin('dist'),
-        // 热替换
-        new webpack.HotModuleReplacementPlugin()
-    ],
-    devServer: {
-        contentBase: './dist',
-        host: 'localhost',
-        port: 3000,
-        // 自动打开浏览器
-        open: true,
-        // 开启热更新
-        hot: true
+    // 提取公共代码
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                // 抽离第三方插件
+                vendor: {
+                    // 指定是node_modules下的第三方包
+                    test: /node_modules/,
+                    chunks: 'initial',
+                    // 打包后的文件名，任意命名
+                    name: 'vendor',
+                    // 设置优先级，防止和自定义公共代码提取时被覆盖，不进行打包
+                    priority: 10
+                },
+                // 抽离自己写的公共代码，utils这个名字可以随意起
+                utils: {
+                    chunks: 'initial',
+                    name: 'utils',
+                    // 只要超出0字节就生成一个新包
+                    minSize: 0
+                }
+            }
+        }
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            filename: 'index.html',
+            // 对应关系，index.js对应的是index.html
+            chunks: ['vendor', 'index']
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/login.html',
+            filename: 'login.html',
+            // 对应关系，login.js对应的是login.html
+            chunks: ['vendor', 'login']
+        }),
+        new ExtractTextWebpackPlugin('css/iview.css')
+    ],
     resolve: {
         // 别名
         alias: {
@@ -114,6 +123,5 @@ module.exports = {
         },
         // 省略后缀
         extensions: ['.js', '.json', '.css']
-    },
-    mode: 'development'
+    }
 };
